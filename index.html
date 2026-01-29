@@ -14,21 +14,32 @@
   <h1>System Stats</h1>
   <div id="stats">Connecting...</div>
   <script>
-    const ws = new WebSocket('wss://' + location.host);
     const fmt = (bytes) => (bytes / 1073741824).toFixed(1) + ' GB';
+    let ws;
 
-    ws.onmessage = (e) => {
-      const s = JSON.parse(e.data);
-      document.getElementById('stats').innerHTML =
-        '<div class="stat"><span class="label">CPU Usage:</span> ' + s.cpu.usage.toFixed(1) + '%' +
-        '<div class="bar"><div class="fill" style="width:' + s.cpu.usage + '%"></div></div></div>' +
-        '<div class="stat"><span class="label">RAM:</span> ' + fmt(s.ram.used) + ' / ' + fmt(s.ram.total) +
-        '<div class="bar"><div class="fill" style="width:' + s.ram.usage + '%"></div></div></div>' +
-        '<div class="stat"><span class="label">Storage:</span> ' + fmt(s.storage.used) + ' / ' + fmt(s.storage.total) +
-        '<div class="bar"><div class="fill" style="width:' + s.storage.usage + '%"></div></div></div>';
-    };
-    ws.onerror = () => document.getElementById('stats').innerHTML = 'Connection error';
-    ws.onclose = () => document.getElementById('stats').innerHTML = 'Disconnected';
+    function connect(protocol) {
+      ws = new WebSocket(protocol + '://' + location.host);
+      ws.onmessage = (e) => {
+        const s = JSON.parse(e.data);
+        document.getElementById('stats').innerHTML =
+          '<div class="stat"><span class="label">CPU Usage:</span> ' + s.cpu.usage.toFixed(1) + '%' +
+          '<div class="bar"><div class="fill" style="width:' + s.cpu.usage + '%"></div></div></div>' +
+          '<div class="stat"><span class="label">RAM:</span> ' + fmt(s.ram.used) + ' / ' + fmt(s.ram.total) +
+          '<div class="bar"><div class="fill" style="width:' + s.ram.usage + '%"></div></div></div>' +
+          '<div class="stat"><span class="label">Storage:</span> ' + fmt(s.storage.used) + ' / ' + fmt(s.storage.total) +
+          '<div class="bar"><div class="fill" style="width:' + s.storage.usage + '%"></div></div></div>';
+      };
+      ws.onerror = () => {
+        if (protocol === 'wss') {
+          connect('ws');
+        } else {
+          document.getElementById('stats').innerHTML = 'Connection error';
+        }
+      };
+      ws.onclose = () => document.getElementById('stats').innerHTML = 'Disconnected';
+    }
+
+    connect('wss');
   </script>
 </body>
 </html>

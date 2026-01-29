@@ -47,7 +47,6 @@ function getStats() {
 
   return {
     cpu: {
-      cores: os.cpus().length,
       usage: getCpuUsage()
     },
     ram: {

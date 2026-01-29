@@ -20,7 +20,6 @@
     ws.onmessage = (e) => {
       const s = JSON.parse(e.data);
       document.getElementById('stats').innerHTML =
-        '<div class="stat"><span class="label">CPU Cores:</span> ' + s.cpu.cores + '</div>' +
         '<div class="stat"><span class="label">CPU Usage:</span> ' + s.cpu.usage.toFixed(1) + '%' +
         '<div class="bar"><div class="fill" style="width:' + s.cpu.usage + '%"></div></div></div>' +
         '<div class="stat"><span class="label">RAM:</span> ' + fmt(s.ram.used) + ' / ' + fmt(s.ram.total) +

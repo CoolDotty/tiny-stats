@@ -1,0 +1,17 @@
+name: Trigger Webhook on Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify-webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send secure webhook
+        uses: navied/secure-actions-webhook@0.2.0
+        with:
+          url: https://${{ vars.DEPLOY_DOMAIN }}/hooks/tiny-stats
+          data: '{"repository":"${{ github.repository }}","commit":"${{ github.sha }}"}'
+          hmacSecret: ${{ secrets.DEPLOY_SECRET }}

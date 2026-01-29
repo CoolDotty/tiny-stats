@@ -88,4 +88,4 @@ setInterval(() => {
   }
 }, INTERVAL);
 
-server.listen(PORT, () => console.log(`Server running on ws://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}\nServer running on ws://localhost:${PORT}`));

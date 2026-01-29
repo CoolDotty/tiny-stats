@@ -9,9 +9,20 @@ jobs:
   notify-webhook:
     runs-on: ubuntu-latest
     steps:
-      - name: Send secure webhook
-        uses: navied/secure-actions-webhook@0.2.0
-        with:
-          url: https://${{ vars.DEPLOY_DOMAIN }}/hooks/tiny-stats
-          data: '{"repository":"${{ github.repository }}","commit":"${{ github.sha }}"}'
-          hmacSecret: ${{ secrets.DEPLOY_SECRET }}
+      - name: Send HMAC-signed webhook request
+        env:
+          DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
+          DEPLOY_DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
+        run: |
+          PAYLOAD='{"repository":"${{ github.repository }}","commit":"${{ github.sha }}"}'
+          SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "$DEPLOY_SECRET" -hex | sed 's/^.* //')
+          
+          echo "Sending to: https://$DEPLOY_DOMAIN/hooks/tiny-stats"
+          echo "Signature: $SIGNATURE"
+          
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "X-Hub-Signature-256: sha256=$SIGNATURE" \
+            -d "$PAYLOAD" \
+            -v \
+            "https://$DEPLOY_DOMAIN/hooks/tiny-stats"

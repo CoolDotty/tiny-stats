@@ -7,7 +7,7 @@ const { WebSocketServer } = require('ws');
 
 const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 7828;
 const INTERVAL = process.env.INTERVAL || 1000;
 
 // Track previous CPU times for usage calculation

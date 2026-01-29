@@ -1,0 +1,12 @@
+{
+  "name": "tiny-stats",
+  "version": "1.0.0",
+  "description": "Dead simple WebSocket server for system stats",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}
